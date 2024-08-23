@@ -1,4 +1,3 @@
-
 // Function to inject the drawing canvas on the front of the card
 function injectCanvas() {
     // Check if the canvas is already injected
@@ -18,7 +17,7 @@ function injectCanvas() {
       container.style.marginTop = '20px';
       container.style.display = 'flex';
       container.style.flexDirection = 'column';
-      container.style.alignItems = 'center'; // Center the canvas and button
+      container.style.alignItems = 'center';
   
       // Create the canvas element
       const canvas = document.createElement('canvas');
@@ -26,7 +25,7 @@ function injectCanvas() {
       canvas.width = 400;
       canvas.height = 400;
       canvas.style.border = '2px solid black';
-      canvas.style.backgroundColor = 'white'; // Set background color to white
+      canvas.style.backgroundColor = 'white';
       container.appendChild(canvas);
   
       // Create the clear button
@@ -34,10 +33,6 @@ function injectCanvas() {
       clearButton.id = 'clearCanvasButton';
       clearButton.innerText = 'Clear';
       clearButton.style.marginTop = '10px';
-      clearButton.style.padding = '5px 10px';
-      clearButton.style.backgroundColor = '#f0f0f0';
-      clearButton.style.border = '1px solid #ccc';
-      clearButton.style.cursor = 'pointer';
       container.appendChild(clearButton);
   
       // Append the container after the keyword element
@@ -49,6 +44,7 @@ function injectCanvas() {
   
       let drawing = false;
   
+      // Handling mouse events for desktop
       canvas.addEventListener('mousedown', (e) => {
         drawing = true;
         ctx.beginPath();
@@ -70,6 +66,35 @@ function injectCanvas() {
         drawing = false;
       });
   
+      // Handling touch events for mobile
+      canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevent scrolling
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        drawing = true;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+      });
+  
+      canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault(); // Prevent scrolling
+        if (drawing) {
+          const touch = e.touches[0];
+          const rect = canvas.getBoundingClientRect();
+          const x = touch.clientX - rect.left;
+          const y = touch.clientY - rect.top;
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
+      });
+  
+      canvas.addEventListener('touchend', () => {
+        drawing = false;
+      });
+  
+      // Clear canvas on button click
       clearButton.addEventListener('click', () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       });
@@ -79,21 +104,12 @@ function injectCanvas() {
     }
   }
   
-  // Detect if on the front of the card and inject the canvas
-  function detectFrontCard() {
-    const url = window.location.href;
-  
-    if (url.includes('/review#')) {
-      console.log('Front of card detected. Injecting canvas.');
-      injectCanvas();
-    } else {
-      console.log('Not the front of a card.');
-    }
+  // Inject the canvas on page load and when the URL hash changes
+  function init() {
+    injectCanvas(); // Try to inject the canvas right away
+    window.addEventListener('hashchange', injectCanvas); // Re-inject canvas when the hash changes
   }
   
-  // Run the detection function initially and add a listener for hash changes (indicating a new card)
-  window.addEventListener('hashchange', detectFrontCard);
-  window.addEventListener('load', detectFrontCard);
-  window.addEventListener('DOMContentLoaded', detectFrontCard);
-  detectFrontCard();
+  // Run the initialization function on page load
+  window.addEventListener('load', init);
   
