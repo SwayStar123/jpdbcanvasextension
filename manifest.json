@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "JPDB Kanji Drawing Plugin",
+    "version": "1.0",
+    "description": "Add a canvas to draw kanji during reviews.",
+    "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+    ],
+    "action": {
+    "default_popup": "popup.html"
+    },
+    "content_scripts": [
+    {
+        "matches": ["https://jpdb.io/review*", "https://jpdb.io/review#a*"],
+        "js": ["contentScript.js"],
+        "css": ["styles.css"]
+    }
+    ]
+}
