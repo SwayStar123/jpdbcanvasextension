@@ -1,5 +1,10 @@
-// Function to inject the drawing canvas on the front of the card
-function injectCanvas() {
+// Function to detect if the user is on a mobile device
+function isMobile() {
+    return /Mobi|Android/i.test(navigator.userAgent);
+  }
+  
+  // Function to inject the drawing canvas on the front of the card
+  function injectCanvas() {
     // Check if the canvas is already injected
     if (document.getElementById('drawingCanvas')) {
       console.log('Canvas already injected. Skipping injection.');
@@ -39,8 +44,14 @@ function injectCanvas() {
       keywordElement.parentElement.appendChild(container);
   
       const ctx = canvas.getContext('2d');
-      ctx.strokeStyle = 'black';
       ctx.lineWidth = 4;
+  
+      // Adjust stroke color based on device type
+      if (isMobile()) {
+        ctx.strokeStyle = 'white';  // White strokes for mobile (against dark background)
+      } else {
+        ctx.strokeStyle = 'black';  // Black strokes for desktop
+      }
   
       let drawing = false;
   
